@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "programming_a_server/application/backend"
+		},
+		{
+			"path": "programming_a_server/application/frontend"
+		}
+	],
+	"settings": {}
+}
