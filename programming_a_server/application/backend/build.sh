@@ -1,0 +1,1 @@
+rm -rf dist && cd ../frontend/ && npm run build && cp -r dist ../backend
