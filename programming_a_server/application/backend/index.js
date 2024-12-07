@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require("./models/person")
 
 const app = express()
 
@@ -18,61 +20,45 @@ app.use(express.static('dist'))
 // Modify morgan format to include POST data
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postData'))
 
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 app.get('/', (request, response) => {
   response.send('<h1>Hello Persons!</h1>')
 })
 
 app.get('/info', (request, response) => {
-  response.send(`
-    <div>
-      <p>Phonebook has info for ${persons.length} people</p>
-      <p>${new Date()}</p>
-    </div>
-  `)
+  Person.find({}).then(persons => {
+    response.send(`
+      <div>
+        <p>Phonebook has info for ${persons.length} people</p>
+        <p>${new Date()}</p>
+      </div>
+    `)
+  }
+  ).catch(error => {
+    return response.status(404).end()
+  })
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  person = persons.find(person => person.id === request.params.id)
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-  persons = persons.filter(person => person.id !== request.params.id)
-  response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', async (request, response) => {
     const body = request.body
   
     if (!body.number || !body.name) {
@@ -81,25 +67,62 @@ app.post('/api/persons', (request, response) => {
       })
     }
 
-    if (persons.find(person => person.name === body.name)) {
+    const existingPerson = await Person.findOne({ name: body.name })
+    console.log("Existing Person:", existingPerson)
+    if (existingPerson) {
       return response.status(400).json({ 
         error: 'name must be unique' 
       })
     }
- 
 
-    let id = Math.round(Math.random() * 1000000).toString()
-  
-    const person = {
+    const newPerson = new Person({
       name: body.name,
-      number: body.number || false,
-      id: id,
+      number: body.number // Fixed typo in 'number'
+    })
+
+    const savedPerson = await newPerson.save()
+    return response.status(201).json(savedPerson)
+})
+
+app.put('/api/persons/:id', async (request, response) => {
+  const body = request.body
+  const id = request.params.id
+
+  const delta = {
+    "name": body.name,
+    "number": body.number
+  }
+
+  Person.findByIdAndUpdate(id, delta, {"new": true}).then(
+    updated => {
+      return response.json(updated)
     }
-  
-    persons = persons.concat(person)
-  
-    response.json(person)
-  })
+  ).catch(error => {
+    return next(error)
+  }
+  )
+})
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
+
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
