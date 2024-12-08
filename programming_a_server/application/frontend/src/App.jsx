@@ -56,7 +56,8 @@ const App = () => {
           showNotification(`Added ${returnedPerson.name}`)
         })
         .catch(error => {
-          showNotification(`Error adding ${nameObject.name}: ${error.response?.data?.error || 'Unknown error'}`, 'error')
+          console.log(error.response.data.error)
+          showNotification(`Error adding ${nameObject.name}: ${error.response.data.error}`, 'error')
         })
     }
   }
