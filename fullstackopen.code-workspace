@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "programming_a_server/application/frontend"
+		},
+		{
+			"path": "backend_testing/blog"
 		}
 	],
 	"settings": {}
