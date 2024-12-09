@@ -19,12 +19,12 @@ const connectToMongoDB = (password) => {
 if (process.argv.length < 3) {
   console.log('give password as argument')
   process.exit(1)
-} 
+}
 
 const password = process.argv[2]
 
 if (process.argv.length === 3) {
-  console.log("getting all persons...")
+  console.log('getting all persons...')
   connectToMongoDB(password)
     .then(() => {
       return Person.find({})
@@ -58,6 +58,6 @@ if (process.argv.length === 3) {
       mongoose.connection.close()
     })
 } else {
-  console.log("too many arguments")
+  console.log('too many arguments')
   process.exit(1)
 }

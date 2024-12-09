@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const Person = require("./models/person")
+const Person = require('./models/person')
 
 const app = express()
 
@@ -32,8 +32,7 @@ app.get('/info', (request, response) => {
         <p>${new Date()}</p>
       </div>
     `)
-  }
-  ).catch(error => {
+  }).catch(() => {
     return response.status(404).end()
   })
 })
@@ -52,58 +51,57 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
-  
-    if (!body.number || !body.name) {
-      return response.status(400).json({ 
-        error: 'missing number and/or name' 
-      })
-    }
+  const body = request.body
 
-    Person.findOne({ name: body.name })
-      .then(existingPerson => {
-        console.log("Existing Person:", existingPerson)
-        if (existingPerson) {
-          return response.status(400).json({ 
-            error: 'name must be unique' 
-          })
-        }
+  if (!body.number || !body.name) {
+    return response.status(400).json({
+      error: 'missing number and/or name'
+    })
+  }
 
-        const newPerson = new Person({
-          name: body.name,
-          number: body.number
+  Person.findOne({ name: body.name })
+    .then(existingPerson => {
+      console.log('Existing Person:', existingPerson)
+      if (existingPerson) {
+        return response.status(400).json({
+          error: 'name must be unique'
         })
+      }
 
-        return newPerson.save()
+      const newPerson = new Person({
+        name: body.name,
+        number: body.number
       })
-      .then(savedPerson => {
-        return response.status(201).json(savedPerson)
-      }).catch(error => {
-        next(error)
-      })
+
+      return newPerson.save()
+    })
+    .then(savedPerson => {
+      return response.status(201).json(savedPerson)
+    }).catch(error => {
+      next(error)
+    })
 })
 
-app.put('/api/persons/:id', async (request, response) => {
-  const {name, number} = request.body
+app.put('/api/persons/:id', async (request, response, next) => {
+  const { name, number } = request.body
   const id = request.params.id
 
-
   const delta = {
-    "name": name,
-    "number": number
+    'name': name,
+    'number': number
   }
 
   Person.findByIdAndUpdate(
-    id, 
-    delta, 
-    {"new": true, runValidators: true, context: 'query' }
+    id,
+    delta,
+    { 'new': true, runValidators: true, context: 'query' }
   ).then(
     updated => {
       return response.json(updated)
@@ -111,8 +109,7 @@ app.put('/api/persons/:id', async (request, response) => {
   ).catch(error => {
     console.log(error.response.data.error)
     return next(error)
-  }
-  )
+  })
 })
 
 const unknownEndpoint = (request, response) => {
