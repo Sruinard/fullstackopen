@@ -15,19 +15,19 @@ beforeEach(async () => {
 
 
 test('dummy returns one', () => {
-  const result = listHelper.dummy(blogs)
+  const result = listHelper.dummy(helper.blogs)
   assert.strictEqual(result, 1)
 })
 
 
 describe('likes', () => {
     test('numberOfLikesSingleItemInArray', () => {
-        const result = listHelper.computeTotalLikes(blogs)
+        const result = listHelper.computeTotalLikes(helper.blogs)
         assert.strictEqual(result, 36)
     }),
     test('favoriteBlogPost', () => {
 
-        const actual = listHelper.favoriteBlogPost(blogs)
+        const actual = listHelper.favoriteBlogPost(helper.blogs)
         console.log('actual', actual)
 
         const expected = {
@@ -41,7 +41,7 @@ describe('likes', () => {
         assert.deepStrictEqual(actual, expected)
     }),
     test('mostActiveWriter', () => {
-        const actual = listHelper.mostBlogs(blogs)
+        const actual = listHelper.mostBlogs(helper.blogs)
         const expected = {
             author: "Robert C. Martin",
             blogs: 3
@@ -49,7 +49,7 @@ describe('likes', () => {
         assert.deepStrictEqual(actual, expected)
     }),
     test('mostLikedAuthor', () => {
-        const actual = listHelper.mostLikes(blogs)
+        const actual = listHelper.mostLikes(helper.blogs)
         const expected = {
             author: "Edsger W. Dijkstra",
             likes: 17
@@ -62,8 +62,46 @@ describe('likes', () => {
 describe('api integration tests', () => {
   test('GET request', async () => {
     const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, helper.blogs.length)
+  }),
+  test('Post request increases number of blogposts', async () => {
+    const blog = {
+      "title": "My First Blog Post",
+      "author": "John Smith",
+      "url": "https://example.com/blog/first-post",
+      "likes": 0
+  }
+    await api.post('/api/blogs').send(blog)
+    const response = await helper.blogsInDb()
+    console.log('response type:', typeof response)
+    console.log('number of elements:', response.length)
+    assert.strictEqual(response.length, helper.blogs.length + 1)
+  }),
+  test('default likes to one', async () => {
+    const blog = {
+      "title": "My First Blog Post",
+      "author": "John Smith",
+      "url": "https://example.com/blog/first-post",
+    }
+    res = await api.post('/api/blogs').send(blog)
+    assert.strictEqual(res.body.likes, 0)
 
-    assert.strictEqual(helper.blogs.length, response.body.length)
+  })
+  test('title and url are set', async () => {
+    const blog = {
+      // "title": "My First Blog Post",
+      "author": "John Smith",
+      // "url": "https://example.com/blog/first-post",
+    }
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(400)
 
+  })
+  test('field id is present in blog object', async () => {
+    const response = await api.get('/api/blogs')
+    const firstBlog = response.body[0]
+    assert.ok(firstBlog.id)
   })
 })
