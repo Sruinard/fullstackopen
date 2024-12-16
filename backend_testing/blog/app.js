@@ -5,7 +5,13 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const blogRouter = require('./controllers/blogposts')
 
-mongoose.connect(config.MONGODB_URI)
+mongoose.connect(config.MONGODB_URI)    
+    .then(() => {
+        console.log('MongoDB connected successfully');
+    })
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+    });
 
 app.use(cors())
 app.use(express.json())
