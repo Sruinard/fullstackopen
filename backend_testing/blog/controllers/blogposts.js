@@ -21,4 +21,28 @@ Router.post('/', async (request, response, next) => {
   }
 })
 
+Router.put('/:id', async (request, response, next) => {
+  try {
+    const updateBlogDictDelta = {
+      likes: request.body.likes,
+    }
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, updateBlogDictDelta, { new: true })
+    if (!updatedBlog) {
+      return response.status(404).json({ error: 'Blog not found' })
+    }
+    response.status(201).json(updatedBlog)
+  } catch (exception) {
+    next(exception)
+  }
+})
+
+Router.delete('/:id', async (request, response, next) => {
+  try {
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end()
+  } catch (exception) {
+    next(exception)
+  }
+})
+
 module.exports = Router

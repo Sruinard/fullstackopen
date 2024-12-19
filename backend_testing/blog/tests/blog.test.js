@@ -14,11 +14,12 @@ beforeEach(async () => {
 
 
 
-test('dummy returns one', () => {
-  const result = listHelper.dummy(helper.blogs)
-  assert.strictEqual(result, 1)
+describe('dummy test', () => {
+  test('dummy returns one', () => {
+    const result = listHelper.dummy(helper.blogs)
+    assert.strictEqual(result, 1)
+  })
 })
-
 
 describe('likes', () => {
     test('numberOfLikesSingleItemInArray', () => {
@@ -28,7 +29,6 @@ describe('likes', () => {
     test('favoriteBlogPost', () => {
 
         const actual = listHelper.favoriteBlogPost(helper.blogs)
-        console.log('actual', actual)
 
         const expected = {
             _id: "5a422b3a1b54a676234d17f9",
@@ -104,4 +104,39 @@ describe('api integration tests', () => {
     const firstBlog = response.body[0]
     assert.ok(firstBlog.id)
   })
+
+
+  describe('deletion of a blog', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToDelete = blogsAtStart[0]
+
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      assert.strictEqual(blogsAtEnd.length, helper.blogs.length - 1)
+
+      const titles = blogsAtEnd.map(r => r.title)
+      assert(!titles.includes(blogToDelete.title))
+    })
+  })
+
+  describe('update of a blog', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
+      const newNumberOfLikes = 200
+      const blog = {
+        likes: newNumberOfLikes
+      }
+      res = await api.put(`/api/blogs/${blogToUpdate.id}`).send(blog)
+      assert.strictEqual(res.body.likes, newNumberOfLikes)
+    })
+  })
+
+
+  
 })
