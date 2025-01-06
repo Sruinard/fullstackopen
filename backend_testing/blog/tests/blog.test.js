@@ -12,8 +12,6 @@ beforeEach(async () => {
   await Blog.insertMany(helper.blogs)
 })
 
-
-
 describe('dummy test', () => {
   test('dummy returns one', () => {
     const result = listHelper.dummy(helper.blogs)
