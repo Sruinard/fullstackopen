@@ -15,8 +15,5 @@ test('database-connection-succeeds', async () => {
         .catch(err => {
             console.error('MongoDB connection error:', err);
         });
-
-    await Blog.deleteMany({}).
-
 }
 )

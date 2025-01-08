@@ -13,9 +13,9 @@
 			"path": "backend_testing/blog"
 		}
 	],
-	"settings": {
-		"nodejs-testing.nodejsPath": "/usr/local/google/home/ruinard/.nvm/versions/node/v20.17.0/bin/node"
-	},
+	// "settings": {
+	// 	"nodejs-testing.nodejsPath": "/usr/local/google/home/ruinard/.nvm/versions/node/v20.17.0/bin/node"
+	// },
 
 	
 }

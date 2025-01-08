@@ -13,9 +13,10 @@ const User = require('../models/user')
 beforeEach(async () => {
   await User.deleteMany({})
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.blogs)
-  const user = new User({ username: 'testuser', password: 'testpassword' })
-  await user.save()
+  const response = await helper.createUser('testuser', 'Test User', 'testpassword' )
+
+  const blogsWithUserId = helper.blogs.map(b => ({ ...b, user: response.body.id.toString() }))
+  await Blog.insertMany(blogsWithUserId)
 })
 
 describe('dummy test', () => {
@@ -109,7 +110,8 @@ describe('api integration tests', () => {
 
   })
   test('field id is present in blog object', async () => {
-    const response = await api.get('/api/blogs')
+    const token = await helper.getAuthToken('testuser', 'testpassword')
+    const response = await api.get('/api/blogs').set('Authorization', `Bearer ${token}`)
     const firstBlog = response.body[0]
     assert.ok(firstBlog.id)
   })

@@ -1,3 +1,5 @@
+const supertest = require('supertest')
+const app = require('../app')
 const Blog = require('../models/blogpost')
 const User = require('../models/user')
 
@@ -92,7 +94,14 @@ async function getAuthToken(username, password) {
   return response.body.token; // Assuming the token is returned in the response body
 }
 
+async function createUser(username, name, password) {
+  const user = await supertest(app)
+      .post('/api/users') // Adjust the endpoint as necessary
+      .send({ username, name, password });
+  
+  return user; // Assuming the token is returned in the response body
+}
 
 module.exports = {
-    blogs, users, nonExistingId, blogsInDb, usersInDb, getAuthToken
+    blogs, users, nonExistingId, blogsInDb, usersInDb, getAuthToken, createUser
 }
