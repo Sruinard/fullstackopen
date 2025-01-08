@@ -84,6 +84,15 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
+async function getAuthToken(username, password) {
+  const response = await supertest(app)
+      .post('/api/login') // Adjust the endpoint as necessary
+      .send({ username, password });
+  
+  return response.body.token; // Assuming the token is returned in the response body
+}
+
+
 module.exports = {
-    blogs, users, nonExistingId, blogsInDb, usersInDb
+    blogs, users, nonExistingId, blogsInDb, usersInDb, getAuthToken
 }

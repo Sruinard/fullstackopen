@@ -3,9 +3,10 @@ const { test, describe } = require('node:test')
 const config = require("../utils/config")
 // testConnection.js
 const mongoose = require('mongoose');
+const Blog = require("../models/blogpost")
 
 
-test('database-connection-succeeds', () => {
+test('database-connection-succeeds', async () => {
     mongoose.connect(config.MONGODB_URI)
         .then(() => {
             console.log('MongoDB connected successfully');
@@ -14,6 +15,8 @@ test('database-connection-succeeds', () => {
         .catch(err => {
             console.error('MongoDB connection error:', err);
         });
+
+    await Blog.deleteMany({}).
 
 }
 )

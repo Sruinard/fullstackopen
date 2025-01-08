@@ -6,10 +6,16 @@ const app = require("../app")
 const api = supertest(app)
 const helper = require('./test_helper')
 const Blog = require('../models/blogpost')
+const User = require('../models/user')
+// testConnection.js
+
 
 beforeEach(async () => {
+  await User.deleteMany({})
   await Blog.deleteMany({})
   await Blog.insertMany(helper.blogs)
+  const user = new User({ username: 'testuser', password: 'testpassword' })
+  await user.save()
 })
 
 describe('dummy test', () => {
@@ -59,7 +65,8 @@ describe('likes', () => {
 
 describe('api integration tests', () => {
   test('GET request', async () => {
-    const response = await api.get('/api/blogs')
+    const token = await helper.getAuthToken('testuser', 'testpassword')
+    const response = await api.get('/api/blogs').set('Authorization', `Bearer ${token}`)
     assert.strictEqual(response.body.length, helper.blogs.length)
   }),
   test('Post request increases number of blogposts', async () => {
@@ -69,7 +76,8 @@ describe('api integration tests', () => {
       "url": "https://example.com/blog/first-post",
       "likes": 0
   }
-    await api.post('/api/blogs').send(blog)
+    const token = await helper.getAuthToken('testuser', 'testpassword')
+    await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(blog)
     const response = await helper.blogsInDb()
     console.log('response type:', typeof response)
     console.log('number of elements:', response.length)
@@ -81,7 +89,8 @@ describe('api integration tests', () => {
       "author": "John Smith",
       "url": "https://example.com/blog/first-post",
     }
-    res = await api.post('/api/blogs').send(blog)
+    const token = await helper.getAuthToken('testuser', 'testpassword')
+    res = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(blog)
     assert.strictEqual(res.body.likes, 0)
 
   })
@@ -91,8 +100,10 @@ describe('api integration tests', () => {
       "author": "John Smith",
       // "url": "https://example.com/blog/first-post",
     }
+    const token = await helper.getAuthToken('testuser', 'testpassword')
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(blog)
       .expect(400)
 
@@ -109,8 +120,10 @@ describe('api integration tests', () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
 
+      const token = await helper.getAuthToken('testuser', 'testpassword')
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
@@ -130,7 +143,8 @@ describe('api integration tests', () => {
       const blog = {
         likes: newNumberOfLikes
       }
-      res = await api.put(`/api/blogs/${blogToUpdate.id}`).send(blog)
+      const token = await helper.getAuthToken('testuser', 'testpassword')
+      res = await api.put(`/api/blogs/${blogToUpdate.id}`).set('Authorization', `Bearer ${token}`).send(blog)
       assert.strictEqual(res.body.likes, newNumberOfLikes)
     })
   })

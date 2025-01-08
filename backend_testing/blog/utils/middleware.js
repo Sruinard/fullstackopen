@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 function validationErrorHandler(err, req, res, next) {
     if (err.name === 'ValidationError') {
         return res.status(400).json({
@@ -7,6 +8,29 @@ function validationErrorHandler(err, req, res, next) {
     }
     next(err); // Pass the error to the next middleware if it's not a validation error
 }
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
+
+function tokenExtractor(req, res, next) {
+  const token = getTokenFrom(req)
+  req.token = token
+  next()
+
+}
+
+function userExtractor(req, res, next) {
+  const decodedToken = jwt.verify(req.token, process.env.SECRET);
+  const userId = decodedToken.id
+  req.userId = userId
+  next()
+}
+
 
 const errorHandler = (error, request, response, next) => {
     if (error.name === 'CastError') {
@@ -27,4 +51,4 @@ const errorHandler = (error, request, response, next) => {
   }
 
 
-module.exports = {errorHandler}
+module.exports = {errorHandler, tokenExtractor, userExtractor}

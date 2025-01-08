@@ -1,15 +1,9 @@
-const jwt = require('jsonwebtoken')
+
 const Router = require('express').Router()
 const Blog = require('../models/blogpost')
 const User = require('../models/user')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
+
 
 
 Router.get('/', async (request, response) => {
@@ -18,14 +12,13 @@ Router.get('/', async (request, response) => {
 })
 
 Router.post('/', async (request, response, next) => {
-  const body = request.body
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
+  const userId = request.userId
 
+  if (!userId) {
+    return response.status(401).json({ error: 'user not defined. please make sure you are authenticated' });
+  }
   const {title, author, url, likes} = request.body
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(userId)
 
   try {
     const blog = new Blog({
@@ -63,14 +56,24 @@ Router.put('/:id', async (request, response, next) => {
     next(exception)
   }
 })
-
 Router.delete('/:id', async (request, response, next) => {
-  try {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
-  } catch (exception) {
-    next(exception)
+  const blogId = request.params.id;
+  const userId = request.userId
+
+  if (!userId) {
+    return response.status(401).json({ error: 'user not defined. please make sure you are authenticated' });
   }
-})
+
+  try {
+    const blog = await Blog.findById(blogId);
+    if (!blog || blog.user.toString() !== userId) {
+      return response.status(403).json({ error: 'Unauthorized to delete this blog' });
+    }
+    await blog.deleteOne();
+    response.status(204).end();
+  } catch (exception) {
+    next(exception);
+  }
+});
 
 module.exports = Router
