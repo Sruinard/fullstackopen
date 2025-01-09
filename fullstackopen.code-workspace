@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "backend_testing/blog"
+		},
+		{
+			"path": "part_5"
 		}
 	],
 	// "settings": {
