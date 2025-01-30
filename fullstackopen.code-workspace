@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "part_5"
+		},
+		{
+			"path": "part_5/end-to-end"
+		}
+	],
+	"launch": {
+		"version": "0.2.0",
+		"configurations": []
+	},
+	// "settings": {
+	// 	"nodejs-testing.nodejsPath": "/usr/local/google/home/ruinard/.nvm/versions/node/v20.17.0/bin/node"
+	// },
+
+	
+}
