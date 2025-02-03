@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "part_5/end-to-end"
+		},
+		{
+			"path": "part_6"
 		}
 	],
 	"launch": {
