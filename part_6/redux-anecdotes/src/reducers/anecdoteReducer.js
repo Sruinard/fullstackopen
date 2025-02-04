@@ -35,10 +35,16 @@ export const createAnecdote = (content) => {
   }
 }
 
-const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-  console.log('action.type', action)
+export const textFilter = text => {
+  return {
+    type: 'FILTER',
+    payload: {
+      text: text
+    }
+  }
+}
+
+const anecdoteReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'VOTE':
       const id = action.payload.id
@@ -52,4 +58,11 @@ const reducer = (state = initialState, action) => {
   return state
 }
 
-export default reducer
+const filterReducer = (state = '', action) => {
+  switch (action.type) {
+    case 'FILTER':
+      return action.payload.text
+  }
+  return state
+}
+export { anecdoteReducer, filterReducer }
