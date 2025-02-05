@@ -1,10 +1,14 @@
-import { textFilter } from '../reducers/anecdoteReducer'
 import { useDispatch } from 'react-redux'
 
 const Filter = () => {
     const dispatch = useDispatch()
     const handleChange = (event) => {
-      dispatch(textFilter(event.target.value))
+      dispatch({
+        type: 'filter/textFilter',
+        payload: {
+          text: event.target.value
+        }
+      })
     }
     const style = {
       marginBottom: 10

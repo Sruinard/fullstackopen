@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -17,52 +19,54 @@ const asObject = (anecdote) => {
   }
 }
 
-const initialState = anecdotesAtStart.map(asObject)
-
-export const incrementVote = (id) => {
-  return {
-      type: 'VOTE',
-      payload: { id }
-  }
-}
-
-export const createAnecdote = (content) => {
-  return {
-    type: 'CREATE',
-    payload: {
-      content
-    }
-  }
-}
-
-export const textFilter = text => {
-  return {
-    type: 'FILTER',
-    payload: {
-      text: text
-    }
-  }
-}
-
-const anecdoteReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'VOTE':
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState: anecdotesAtStart.map(asObject),
+  reducers: {
+    vote(state, action) {
       const id = action.payload.id
-      const otc = state.find(anec => anec.id === id)
-      const co = {...otc, votes: otc.votes + 1}
-      return state.map(anec => anec.id !== id ? anec : co)
-    case 'CREATE':
-      const newObj = asObject(action.payload.content)
-      return [...state, newObj]
+      const anecdoteToVote = state.find(anecdote => anecdote.id === id)
+      const updatedAnecdote = {...anecdoteToVote, votes: anecdoteToVote.votes + 1}
+      return state.map(anecdote => anecdote.id !== id ? anecdote : updatedAnecdote)
+    },
+    create(state, action) {
+      const newAnecdote = asObject(action.payload.content)
+      return [...state, newAnecdote]
+    }
   }
-  return state
-}
+})
 
-const filterReducer = (state = '', action) => {
-  switch (action.type) {
-    case 'FILTER':
+
+export const filterSlice = createSlice({
+  name: 'filter',
+  initialState: '',
+  reducers: {
+    textFilter(state, action) {
       return action.payload.text
+    }
   }
-  return state
-}
-export { anecdoteReducer, filterReducer }
+})
+
+const notificationSlice = createSlice({
+  name: 'notification',
+  initialState: '',
+  reducers: {
+    setNotification(state, action) {
+      return action.payload;
+    },
+    clearNotification(state) {
+      return ''; // Action to clear notification
+    }
+  }
+});
+
+export const incrementVote = anecdoteSlice.actions.vote
+export const createAnecdote = anecdoteSlice.actions.create
+export const anecdoteReducer = anecdoteSlice.reducer
+
+export const filterText = filterSlice.actions.textFilter
+export const filterReducer = filterSlice.reducer
+
+export const setNotification = notificationSlice.actions.setNotification
+export const clearNotification = notificationSlice.actions.clearNotification
+export const notificationReducer = notificationSlice.reducer
