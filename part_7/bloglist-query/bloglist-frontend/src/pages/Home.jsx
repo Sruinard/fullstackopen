@@ -12,14 +12,12 @@ import Navigation from '../components/Navigation'
 
 const Home = () => {
   const notification = useNotificationValue()
-  const { user, login, logout } = useUser()
-
-
+  const { user } = useUser()
   const blogFormRef = useRef()
 
   const blogForm = () => (
-    <Togglable buttonLabel='new blog' ref={blogFormRef}>
-      <BlogForm  user={user} />
+    <Togglable buttonLabel='Create new blog' ref={blogFormRef}>
+      <BlogForm user={user} />
     </Togglable>
   )
 
@@ -31,35 +29,56 @@ const Home = () => {
     refetchOnMount: false,
   })
 
-
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <div className="min-h-screen bg-white">
+        <Navigation />
+        <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+          <div className="text-center text-gray-600">Loading...</div>
+        </div>
+      </div>
+    )
   }
 
   if (isError) {
-    return <div>Error: {error.message}</div>
+    return (
+      <div className="min-h-screen bg-white">
+        <Navigation />
+        <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+          <div className="text-center text-red-600">Error: {error.message}</div>
+        </div>
+      </div>
+    )
   }
 
-
-
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <Navigation />
-      {notification !== null ?
-        <Notification message={notification} type={notification.includes('failed') ? 'error' : 'success'} />
-        : null
-      }
-      {user === null ?
-        <LoginForm /> :
-        <div>
-          {blogForm()}
-        </div>
-      }
+      <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {notification && (
+          <Notification 
+            message={notification} 
+            type={notification.includes('failed') ? 'error' : 'success'} 
+          />
+        )}
+        
+        {user === null ? (
+          <LoginForm />
+        ) : (
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">Blogs</h2>
+              <div className="flex items-center justify-center">
+                {blogForm()}
+              </div>
+            </div>
 
-      <h2>blogs</h2>
-      <div data-testid='blogs'>
-        {user !== null && blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} user={user} />
+            <div className="space-y-4" data-testid='blogs'>
+              {blogs.map(blog =>
+                <Blog key={blog.id} blog={blog} user={user} />
+              )}
+            </div>
+          </div>
         )}
       </div>
     </div>

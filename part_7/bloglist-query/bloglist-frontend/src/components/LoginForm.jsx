@@ -4,29 +4,6 @@ import { useNotificationDispatch, useNotificationValue } from './NotificationCon
 import { useState } from 'react'
 import Notification from './Notification'
 
-// const loginForm = () => {
-//   const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-//   const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
-//   return (
-//     <div>
-//       <div style={hideWhenVisible}>
-//         <button onClick={() => setLoginVisible(true)}>log in</button>
-//       </div>
-//       <div style={showWhenVisible}>
-//         <h3>login to application</h3>
-//         <LoginForm
-//           username={username}
-//           password={password}
-//           handleUsernameChange={({ target }) => setUsername(target.value)}
-//           handlePasswordChange={({ target }) => setPassword(target.value)}
-//         />
-//         <button onClick={() => setLoginVisible(false)}>cancel</button>
-//       </div>
-//     </div>
-//   )
-// }
-
 const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -64,24 +41,65 @@ const LoginForm = () => {
     setPassword(event.target.value)
   }
 
-  return <div>
-    <h3>Login</h3>
-    {notification !== null ?
-        <Notification message={notification} type={notification.includes('failed') ? 'error' : 'success'} />
-        : null
-      }
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input data-testid='username' value={username} onChange={handleUsernameChange} />
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="max-w-sm w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-semibold text-gray-900">
+            Login to your account
+          </h2>
+        </div>
+        {notification !== null && (
+          <Notification 
+            message={notification} 
+            type={notification.includes('failed') ? 'error' : 'success'} 
+          />
+        )}
+        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                Username
+              </label>
+              <div className="mt-1">
+                <input
+                  data-testid="username"
+                  id="username"
+                  value={username}
+                  onChange={handleUsernameChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              <div className="mt-1">
+                <input
+                  data-testid="password"
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
+            >
+              Sign in
+            </button>
+          </div>
+        </form>
       </div>
-      <div>
-        password
-        <input data-testid='password' type="password" value={password} onChange={handlePasswordChange} />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  </div>
+    </div>
+  )
 }
 
 export default LoginForm

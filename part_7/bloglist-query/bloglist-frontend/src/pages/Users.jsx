@@ -46,36 +46,54 @@ const Users = () => {
     console.log('groupedBlogs', groupedBlogs)
 
     return (
-        <div>
+        <div className="min-h-screen bg-white">
             <Navigation />
-            <h2>Users</h2>
-            {user === null ?
-                <LoginForm /> :
-                <div>
-                    <p>{user.name} logged-in  <button onClick={logout}>logout</button></p>
-                    {blogForm()}
+            <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-8">Users</h2>
+                {user === null ? (
+                    <LoginForm />
+                ) : (
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <p className="text-gray-600">
+                                {user.name} logged-in
+                            </p>
+                            {blogForm()}
+                        </div>
+                    </div>
+                )}
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Username
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Blogs created
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {Object.keys(groupedBlogs).map(user => (
+                                <tr key={user} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <Link 
+                                            to={`/users/${groupedBlogs[user][0].user.id}`}
+                                            className="text-black hover:underline"
+                                        >
+                                            {user}
+                                        </Link>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                                        {groupedBlogs[user].length} blogs
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
-            }
-            <table>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Blogs created</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.keys(groupedBlogs).map(user => (
-                        <tr key={user}>
-                            <td>
-                                <Link to={`/users/${groupedBlogs[user][0].user.id}`}>{user}</Link>
-                            </td>
-                            <td>
-                                {groupedBlogs[user].length} blogs
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            </div>
         </div>
     )
 }

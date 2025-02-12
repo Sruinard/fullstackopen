@@ -4,15 +4,7 @@ import { Link } from 'react-router-dom'
 import blogService from '../services/blogs'
 
 const Blog = ({ blog, user }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
   const [showDetails, setShowDetails] = useState(false)
-
   const isSameUser = (blog.user.id === user.id)
   const queryClient = useQueryClient()
   const updateBlogMutation = useMutation({
@@ -41,11 +33,28 @@ const Blog = ({ blog, user }) => {
     }
   }
 
-  return <div style={blogStyle}>
-    <Link to={`/blogs/${blog.id}`}>
-      {blog.title} {blog.author}
-    </Link>
-  </div>
+  return (
+    <div className="border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-sm transition-shadow">
+      <Link 
+        to={`/blogs/${blog.id}`}
+        className="block"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 hover:text-black">
+              {blog.title}
+            </h3>
+            <p className="text-gray-600 text-sm mt-1">
+              by {blog.author}
+            </p>
+          </div>
+          <div className="text-sm text-gray-500">
+            {blog.likes} likes
+          </div>
+        </div>
+      </Link>
+    </div>
+  )
 }
 
 export default Blog
