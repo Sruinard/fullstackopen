@@ -180,6 +180,7 @@ describe('When there is initially some blogs saved', () => {
         author: "Arturo chan",
         url: "https://reactpatterns.new.com/",
         likes: 10,
+        comments: ['comment 1', 'comment 2']
       }
       const blogsSaved = await api.get('/api/blogs')
       const blogId = listHelper.searchIdByTitle(blogsSaved.body, blogToModify)
