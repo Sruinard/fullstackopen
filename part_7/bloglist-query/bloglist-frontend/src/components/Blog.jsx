@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import blogService from '../services/blogs'
 
 const Blog = ({ blog, user }) => {
@@ -40,29 +41,10 @@ const Blog = ({ blog, user }) => {
     }
   }
 
-  const handleUpdateBlog = () => {
-    updateBlogMutation.mutate(
-        {
-          id: blog.id,
-          title: blog.title,
-          author: blog.author,
-          url: blog.url,
-          likes: blog.likes + 1,
-          user: blog.user.id
-        })
-  }
   return <div style={blogStyle}>
-    {blog.title} {blog.author} <button onClick={() => { setShowDetails(!showDetails) }}>{showDetails ? 'hide' : 'view'}</button>
-    {showDetails && <div>
-      {blog.url} <br />
-      likes: {blog.likes}
-      <button onClick={handleUpdateBlog}>like</button>
-      <div>
-        {blog.user.id === user.id ? `You` : `User ${blog.user.id}`}
-      </div>
-      {isSameUser && <button onClick={handleDeleteBlog}>remove</button>}
-    </div>
-    }
+    <Link to={`/blogs/${blog.id}`}>
+      {blog.title} {blog.author}
+    </Link>
   </div>
 }
 

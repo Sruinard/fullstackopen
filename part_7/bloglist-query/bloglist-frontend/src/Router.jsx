@@ -4,10 +4,16 @@ import { createBrowserRouter } from 'react-router-dom';
 import Home from './pages/Home';
 import Users from './pages/Users';
 import Blog from './pages/Blog';
+import User from './pages/User';
+
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
+      element: <Home />,
+  },
+  {
+    path: '/blogs',
+      element: <Home />,
   },
   {
     path: '/users',
@@ -16,5 +22,9 @@ export const router = createBrowserRouter([
   {
     path: '/blogs/:id',
     element: <Blog />,
+  },
+  {
+    path: '/users/:id',
+    element: <User />,
   }
 ]);

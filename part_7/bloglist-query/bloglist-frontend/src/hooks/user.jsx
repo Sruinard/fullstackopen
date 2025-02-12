@@ -55,6 +55,7 @@ const useUser = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      console.log('user', user)
       setUser(user)
     }
   }, [])

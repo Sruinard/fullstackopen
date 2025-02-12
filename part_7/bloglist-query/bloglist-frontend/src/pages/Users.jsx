@@ -6,7 +6,7 @@ import LoginForm from '../components/LoginForm'
 import BlogForm from '../components/BlogForm'
 import { useRef } from 'react'
 import Togglable from '../components/Togglable'
-
+import Navigation from '../components/Navigation'
 const Users = () => {
     const { user, logout } = useUser()
     const blogFormRef = useRef()
@@ -47,6 +47,7 @@ const Users = () => {
 
     return (
         <div>
+            <Navigation />
             <h2>Users</h2>
             {user === null ?
                 <LoginForm /> :
@@ -66,7 +67,7 @@ const Users = () => {
                     {Object.keys(groupedBlogs).map(user => (
                         <tr key={user}>
                             <td>
-                                <Link to={`/users/${user.id}`}>{user}</Link>
+                                <Link to={`/users/${groupedBlogs[user][0].user.id}`}>{user}</Link>
                             </td>
                             <td>
                                 {groupedBlogs[user].length} blogs

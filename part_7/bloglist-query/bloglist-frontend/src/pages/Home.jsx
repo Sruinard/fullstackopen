@@ -8,10 +8,12 @@ import BlogForm from '../components/BlogForm'
 import Togglable from '../components/Togglable'
 import { useNotificationValue } from '../components/NotificationContext'
 import { useUser } from '../hooks/user'
+import Navigation from '../components/Navigation'
 
 const Home = () => {
   const notification = useNotificationValue()
   const { user, login, logout } = useUser()
+
 
   const blogFormRef = useRef()
 
@@ -42,6 +44,7 @@ const Home = () => {
 
   return (
     <div>
+      <Navigation />
       {notification !== null ?
         <Notification message={notification} type={notification.includes('failed') ? 'error' : 'success'} />
         : null
@@ -49,7 +52,6 @@ const Home = () => {
       {user === null ?
         <LoginForm /> :
         <div>
-          <p>{user.name} logged-in  <button onClick={logout}>logout</button></p>
           {blogForm()}
         </div>
       }
