@@ -1,0 +1,14 @@
+{
+  "name": "the_server",
+  "version": "1.0.0",
+  "main": "library-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@apollo/server": "^4.11.3"
+  }
+}
