@@ -9,6 +9,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@apollo/server": "^4.11.3"
+    "@apollo/server": "^4.11.3",
+    "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.8.6",
+    "mongoose-unique-validator": "^4.0.1"
   }
 }
