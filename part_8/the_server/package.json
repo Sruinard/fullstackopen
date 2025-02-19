@@ -10,9 +10,15 @@
   "description": "",
   "dependencies": {
     "@apollo/server": "^4.11.3",
+    "@graphql-tools/schema": "^10.0.18",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "graphql-subscriptions": "^3.0.0",
+    "graphql-ws": "^6.0.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.8.6",
-    "mongoose-unique-validator": "^4.0.1"
+    "mongoose-unique-validator": "^4.0.1",
+    "ws": "^8.18.0"
   }
 }
