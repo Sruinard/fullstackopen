@@ -4,12 +4,26 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Author from "./components/Author";
 import { Routes, Route, Link } from "react-router-dom";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from '@apollo/client'
+
+import { useQuery, useMutation, useSubscription } from '@apollo/client'
+
 import { useEffect } from "react";
 import LoginForm from "./components/LoginForm";
 import Recommendations from "./components/Recommendations";
+import { BOOK_ADDED, ALL_BOOKS, ALL_BOOKS_BY_GENRE } from "./queries";
+import updateCache from "./utils/operations";
 const App = () => {
   const [token, setToken] = useState(null);
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      console.log('bookAddedData', data.data)
+      console.log('bookAddedDataDetailed', data.data.bookAdded)
+      const { bookAdded } = data.data
+      updateCache(client.cache, bookAdded)
+    }
+  })
 
   useEffect(() => {
     const token = localStorage.getItem('library-user-token');
