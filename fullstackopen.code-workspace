@@ -17,6 +17,9 @@
 		},
 		{
 			"path": "part_8"
+		},
+		{
+			"path": "part_9"
 		}
 	],
 	"launch": {
