@@ -8,6 +8,11 @@ router.get('/', (_req, res) => {
     res.send(patientsService.getPatients());
 });
 
+router.get('/:id', (req: Request, res: Response) => {
+    const patient = patientsService.getPatient(req.params.id);
+    res.json(patient);
+});
+
 router.post('/', middleware.patientParser, (req: Request<{}, {}, NewPatient>, res: Response<Patient>) => {
     const newPatient = patientsService.addPatient(req.body);
     res.json(newPatient);
